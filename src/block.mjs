@@ -8,7 +8,6 @@ export class Block {
     this.previousHash = previousHash;
     this.timestamp = Date.now();
     this.nonce = 0;
-    this.hash = this.calculateHash();
   }
 
   calculateHash() {
@@ -22,11 +21,13 @@ export class Block {
   }
 
   mineBlock(difficulty) {
+    let hash = this.calculateHash();
+
     while (
-      this.hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")
+      hash.substring(0, difficulty) !== Array(difficulty + 1).join("0")
     ) {
       this.nonce++;
-      this.hash = this.calculateHash();
+      hash = this.calculateHash();
     }
   }
 }

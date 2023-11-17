@@ -1,14 +1,18 @@
 import { Block } from "./block.mjs";
 export class Blockchain {
   constructor() {
-    this.chain = [this.createStartBlock()];
     this.difficulty = 3;
+    this.chain = [this.createStartBlock()];
     this.pendingTransactions = [];
     this.miningReward = 100;
   }
 
   createStartBlock() {
-    return new Block([], "0");
+    const startBlock = new Block([], "0");
+
+    startBlock.mineBlock(this.difficulty);
+
+    return startBlock;
   }
 
   getLatestBlock() {
@@ -16,7 +20,7 @@ export class Blockchain {
   }
 
   minePendingTransactions(miningRewardAddress) {
-    let block = new Block(this.pendingTransactions, this.getLatestBlock().hash);
+    let block = new Block(this.pendingTransactions, this.getLatestBlock().calculateHash());
     block.mineBlock(this.difficulty);
     this.chain.push(block);
     this.pendingTransactions = [
@@ -51,10 +55,7 @@ export class Blockchain {
     for (let i = 1; i < this.chain.length; i++) {
       const currentBlock = this.chain[i];
       const prevBlock = this.chain[i - 1];
-      if (currentBlock.hash !== currentBlock.calculateHash()) {
-        return false;
-      }
-      if (currentBlock.previousHash !== prevBlock.hash) {
+      if (currentBlock.previousHash !== prevBlock.calculateHash()) {
         return false;
       }
     }
